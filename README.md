@@ -273,4 +273,4 @@ Master's students in Sport Management, esports professionals, and sports busines
 
 ---
 
-Made with 🏆 for Sport Business Intelligence
+Made with 🏆 for Sport Business Intelligence 
