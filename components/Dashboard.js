@@ -49,26 +49,26 @@ export default function Dashboard() {
 
   // Count high priority articles
   const highPriorityCount = filteredArticles.filter(a => 
-    a.priority.includes('High') || a.priority.includes('ðŸ”´')
+    a.priority.includes('High') || a.priority.includes('🔴')
   ).length;
 
   const regionEmojis = {
-    'North America': 'ðŸŒŽ',
-    'Europe': 'ðŸ‡ªðŸ‡º',
-    'Asia-Pacific': 'ðŸŒ',
-    'Middle East & Africa': 'ðŸŒ',
-    'Latin America': 'ðŸŒŽ',
-    'Global': 'ðŸŒ'
+    'North America': '🌎',
+    'Europe': '🇪🇺',
+    'Asia-Pacific': '🌏',
+    'Middle East & Africa': '🌍',
+    'Latin America': '🌎',
+    'Global': '🌐'
   };
 
   const topicEmojis = {
-    'Finance': 'ðŸ’°',
-    'Media Rights': 'ðŸ“º',
-    'Technology': 'ðŸ’»',
-    'Sponsorship': 'ðŸ¤',
-    'Infrastructure': 'ðŸŒ',
-    'Marketing': 'ðŸ“Š',
-    'Esports': 'ðŸŽ®'
+    'Finance': '💰',
+    'Media Rights': '📺',
+    'Technology': '💻',
+    'Sponsorship': '🤝',
+    'Infrastructure': '🏟',
+    'Marketing': '📊',
+    'Esports': '🎮'
   };
 
   if (loading) {
@@ -87,7 +87,7 @@ export default function Dashboard() {
         <div className={styles.container}>
           <div className={styles.headerContent}>
             <div className={styles.logoSection}>
-              <div className={styles.logo}>ðŸ†</div>
+              <div className={styles.logo}>🏆</div>
               <h1>Sport Business Watch</h1>
             </div>
             <div className={styles.headerStats}>
@@ -118,19 +118,21 @@ export default function Dashboard() {
             emojis={regionEmojis}
           />
           
-          <FilterDropdown
-            label="Sport"
-            options={uniqueSports}
-            active={filters.sport}
-            onChange={(val) => setFilters({...filters, sport: val})}
-          />
-          
-          <FilterDropdown
-            label="Topic"
-            options={uniqueTopics}
-            active={filters.topic}
-            onChange={(val) => setFilters({...filters, topic: val})}
-          />
+          <div className={styles.filterRow}>
+            <FilterDropdown
+              label="Topic"
+              options={uniqueTopics}
+              active={filters.topic}
+              onChange={(val) => setFilters({...filters, topic: val})}
+            />
+            
+            <FilterDropdown
+              label="Sport"
+              options={uniqueSports}
+              active={filters.sport}
+              onChange={(val) => setFilters({...filters, sport: val})}
+            />
+          </div>
           
           <FilterSection
             label="Priority"
@@ -213,19 +215,19 @@ function ArticleCard({ article, index }) {
   const [showSummary, setShowSummary] = useState(false);
 
   const getPriorityClass = (priority) => {
-    if (priority.includes('High') || priority.includes('ðŸ”´')) return styles.priorityHigh;
-    if (priority.includes('Medium') || priority.includes('ðŸŸ¡')) return styles.priorityMedium;
+    if (priority.includes('High') || priority.includes('🔴')) return styles.priorityHigh;
+    if (priority.includes('Medium') || priority.includes('🟡')) return styles.priorityMedium;
     return styles.priorityLow;
   };
 
   const regionEmoji = {
-    'North America': 'ðŸŒŽ',
-    'Europe': 'ðŸ‡ªðŸ‡º',
-    'Asia-Pacific': 'ðŸŒ',
-    'Middle East & Africa': 'ðŸŒ',
-    'Latin America': 'ðŸŒŽ',
-    'Global': 'ðŸŒ'
-  }[article.region] || 'ðŸŒ';
+    'North America': '🌎',
+    'Europe': '🇪🇺',
+    'Asia-Pacific': '🌏',
+    'Middle East & Africa': '🌍',
+    'Latin America': '🌎',
+    'Global': '🌐'
+  }[article.region] || '🌐';
 
   return (
     <a 
@@ -239,7 +241,7 @@ function ArticleCard({ article, index }) {
         <div className={styles.cardHeader}>
           <div className={styles.cardTags}>
             <span className={`${styles.tag} ${getPriorityClass(article.priority)}`}>
-              {article.priority.replace('ðŸ”´ ', '').replace('ðŸŸ¡ ', '').replace('ðŸŸ¢ ', '')}
+              {article.priority.replace('🔴 ', '').replace('🟡 ', '').replace('🟢 ', '')}
             </span>
             <span className={`${styles.tag} ${styles.sport}`}>{article.sport}</span>
           </div>
