@@ -49,26 +49,26 @@ export default function Dashboard() {
 
   // Count high priority articles
   const highPriorityCount = filteredArticles.filter(a => 
-    a.priority.includes('High') || a.priority.includes('🔴')
+    a.priority.includes('High') || a.priority.includes('ðŸ”´')
   ).length;
 
   const regionEmojis = {
-    'North America': '🌎',
-    'Europe': '🇪🇺',
-    'Asia-Pacific': '🌏',
-    'Middle East & Africa': '🌍',
-    'Latin America': '🌎',
-    'Global': '🌐'
+    'North America': 'ðŸŒŽ',
+    'Europe': 'ðŸ‡ªðŸ‡º',
+    'Asia-Pacific': 'ðŸŒ',
+    'Middle East & Africa': 'ðŸŒ',
+    'Latin America': 'ðŸŒŽ',
+    'Global': 'ðŸŒ'
   };
 
   const topicEmojis = {
-    'Finance': '💰',
-    'Media Rights': '📺',
-    'Technology': '💻',
-    'Sponsorship': '🤝',
-    'Infrastructure': '🌍',
-    'Marketing': '📊',
-    'Esports': '🎮'
+    'Finance': 'ðŸ’°',
+    'Media Rights': 'ðŸ“º',
+    'Technology': 'ðŸ’»',
+    'Sponsorship': 'ðŸ¤',
+    'Infrastructure': 'ðŸŒ',
+    'Marketing': 'ðŸ“Š',
+    'Esports': 'ðŸŽ®'
   };
 
   if (loading) {
@@ -87,7 +87,7 @@ export default function Dashboard() {
         <div className={styles.container}>
           <div className={styles.headerContent}>
             <div className={styles.logoSection}>
-              <div className={styles.logo}>🏆</div>
+              <div className={styles.logo}>ðŸ†</div>
               <h1>Sport Business Watch</h1>
             </div>
             <div className={styles.headerStats}>
@@ -125,12 +125,11 @@ export default function Dashboard() {
             onChange={(val) => setFilters({...filters, sport: val})}
           />
           
-          <FilterSection
+          <FilterDropdown
             label="Topic"
             options={uniqueTopics}
             active={filters.topic}
             onChange={(val) => setFilters({...filters, topic: val})}
-            emojis={topicEmojis}
           />
           
           <FilterSection
@@ -187,6 +186,11 @@ function FilterSection({ label, options, active, onChange, emojis = {} }) {
 }
 
 function FilterDropdown({ label, options, active, onChange }) {
+  const placeholders = {
+    'Sport': 'All Sports',
+    'Topic': 'All Topics'
+  };
+  
   return (
     <div className={styles.filterSection}>
       <div className={styles.filterLabel}>{label}</div>
@@ -197,7 +201,7 @@ function FilterDropdown({ label, options, active, onChange }) {
       >
         {options.map(option => (
           <option key={option} value={option}>
-            {option === 'all' ? 'All Sports' : option}
+            {option === 'all' ? (placeholders[label] || 'All') : option}
           </option>
         ))}
       </select>
@@ -209,19 +213,19 @@ function ArticleCard({ article, index }) {
   const [showSummary, setShowSummary] = useState(false);
 
   const getPriorityClass = (priority) => {
-    if (priority.includes('High') || priority.includes('🔴')) return styles.priorityHigh;
-    if (priority.includes('Medium') || priority.includes('🟡')) return styles.priorityMedium;
+    if (priority.includes('High') || priority.includes('ðŸ”´')) return styles.priorityHigh;
+    if (priority.includes('Medium') || priority.includes('ðŸŸ¡')) return styles.priorityMedium;
     return styles.priorityLow;
   };
 
   const regionEmoji = {
-    'North America': '🌎',
-    'Europe': '🇪🇺',
-    'Asia-Pacific': '🌏',
-    'Middle East & Africa': '🌍',
-    'Latin America': '🌎',
-    'Global': '🌐'
-  }[article.region] || '🌐';
+    'North America': 'ðŸŒŽ',
+    'Europe': 'ðŸ‡ªðŸ‡º',
+    'Asia-Pacific': 'ðŸŒ',
+    'Middle East & Africa': 'ðŸŒ',
+    'Latin America': 'ðŸŒŽ',
+    'Global': 'ðŸŒ'
+  }[article.region] || 'ðŸŒ';
 
   return (
     <a 
@@ -235,7 +239,7 @@ function ArticleCard({ article, index }) {
         <div className={styles.cardHeader}>
           <div className={styles.cardTags}>
             <span className={`${styles.tag} ${getPriorityClass(article.priority)}`}>
-              {article.priority.replace('🔴 ', '').replace('🟡 ', '').replace('🟢 ', '')}
+              {article.priority.replace('ðŸ”´ ', '').replace('ðŸŸ¡ ', '').replace('ðŸŸ¢ ', '')}
             </span>
             <span className={`${styles.tag} ${styles.sport}`}>{article.sport}</span>
           </div>
