@@ -6,6 +6,8 @@ import styles from './Dashboard.module.css';
 export default function Dashboard() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScroll, setLastScroll] = useState(0);
   const [filters, setFilters] = useState({
     region: 'all',
     sport: 'all',
@@ -27,6 +29,27 @@ export default function Dashboard() {
         setLoading(false);
       });
   }, []);
+
+  // Handle scroll to hide/show header
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.pageYOffset;
+      const threshold = 100;
+
+      if (currentScroll <= threshold) {
+        setHeaderVisible(true);
+      } else if (currentScroll > lastScroll) {
+        setHeaderVisible(false);
+      } else {
+        setHeaderVisible(true);
+      }
+
+      setLastScroll(currentScroll);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScroll]);
 
   // Extract unique values for dynamic filters
   const uniqueRegions = ['all', ...new Set(articles.map(a => a.region))];
@@ -52,6 +75,17 @@ export default function Dashboard() {
     a.priority.includes('High') || a.priority.includes('🔴')
   ).length;
 
+  // Calculate trending topics (top 5)
+  const topicCounts = {};
+  articles.forEach(article => {
+    if (article.topic) {
+      topicCounts[article.topic] = (topicCounts[article.topic] || 0) + 1;
+    }
+  });
+  const trendingTopics = Object.entries(topicCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
   const regionEmojis = {
     'North America': '🌎',
     'Europe': '🇪🇺',
@@ -59,16 +93,6 @@ export default function Dashboard() {
     'Middle East & Africa': '🌍',
     'Latin America': '🌎',
     'Global': '🌐'
-  };
-
-  const topicEmojis = {
-    'Finance': '💰',
-    'Media Rights': '📺',
-    'Technology': '💻',
-    'Sponsorship': '🤝',
-    'Infrastructure': '🏟',
-    'Marketing': '📊',
-    'Esports': '🎮'
   };
 
   if (loading) {
@@ -83,67 +107,137 @@ export default function Dashboard() {
     <>
       <div className={styles.gradientBg} />
       
-      <header className={styles.header}>
+      <header className={`${styles.header} ${!headerVisible ? styles.headerHidden : ''}`}>
         <div className={styles.container}>
-          <div className={styles.headerContent}>
+          {/* Logo Section */}
+          <div className={styles.headerTop}>
             <div className={styles.logoSection}>
-              <div className={styles.logo}>🏆</div>
-              <h1>Sport Business Watch</h1>
-            </div>
-            <div className={styles.headerStats}>
-              <div className={styles.stat}>
-                <div className={styles.statLabel}>Articles</div>
-                <div className={styles.statValue}>{filteredArticles.length}</div>
-              </div>
-              <div className={styles.stat}>
-                <div className={styles.statLabel}>High Priority</div>
-                <div className={styles.statValue}>{highPriorityCount}</div>
-              </div>
-              <div className={styles.stat}>
-                <div className={styles.statLabel}>Sources</div>
-                <div className={styles.statValue}>35</div>
-              </div>
+              <div className={styles.logoText}>Sport Business</div>
+              <div className={styles.logoSubtitle}>Intelligence Hub</div>
             </div>
           </div>
+
+          {/* Stats Grid */}
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <div className={styles.statLabel}>Articles</div>
+              <div className={`${styles.statValue} ${styles.accent}`}>{filteredArticles.length}</div>
+              <div className={styles.statChange}>↗ {articles.length} total</div>
+            </div>
+            <div className={styles.statCard}>
+              <div className={styles.statLabel}>High Priority</div>
+              <div className={`${styles.statValue} ${styles.red}`}>{highPriorityCount}</div>
+              <div className={styles.statChange}>
+                {highPriorityCount > 0 ? '↗' : '↘'} {Math.round((highPriorityCount / filteredArticles.length) * 100)}% of total
+              </div>
+            </div>
+            <div className={styles.statCard}>
+              <div className={styles.statLabel}>Sources</div>
+              <div className={`${styles.statValue} ${styles.blue}`}>35</div>
+              <div className={styles.statChange}>↗ Active</div>
+            </div>
+          </div>
+
+          {/* Trending Section */}
+          {trendingTopics.length > 0 && (
+            <div className={styles.trendingSection}>
+              <div className={styles.trendingHeader}>
+                <div className={styles.trendingTitle}>🔥 Trending This Week</div>
+                <div className={styles.trendingPeriod}>
+                  {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </div>
+              </div>
+              <div className={styles.trendingTags}>
+                {trendingTopics.map(([topic, count], idx) => (
+                  <div 
+                    key={topic} 
+                    className={`${styles.trendingTag} ${idx === 0 ? styles.hot : ''}`}
+                    onClick={() => setFilters({...filters, topic})}
+                  >
+                    <span>{topic}</span>
+                    <span className={styles.count}>{count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
+      {/* Spacer for fixed header */}
+      <div className={styles.headerSpacer}></div>
+
       <div className={styles.container}>
+        {/* Filters */}
         <div className={styles.filters}>
-          <FilterSection
-            label="Region"
-            options={uniqueRegions}
-            active={filters.region}
-            onChange={(val) => setFilters({...filters, region: val})}
-            emojis={regionEmojis}
-          />
-          
-          <div className={styles.filterRow}>
-            <FilterDropdown
-              label="Topic"
-              options={uniqueTopics}
-              active={filters.topic}
-              onChange={(val) => setFilters({...filters, topic: val})}
-            />
-            
-            <FilterDropdown
-              label="Sport"
-              options={uniqueSports}
-              active={filters.sport}
-              onChange={(val) => setFilters({...filters, sport: val})}
-            />
+          {/* Region chips */}
+          <div className={styles.filterSection}>
+            <div className={styles.filterLabel}>Region</div>
+            <div className={styles.chipsScroll}>
+              {uniqueRegions.map(region => (
+                <button
+                  key={region}
+                  className={`${styles.chip} ${filters.region === region ? styles.active : ''}`}
+                  onClick={() => setFilters({...filters, region})}
+                >
+                  {region === 'all' ? 'All' : `${regionEmojis[region] || ''} ${region}`}
+                </button>
+              ))}
+            </div>
           </div>
-          
-          <FilterSection
-            label="Priority"
-            options={uniquePriorities}
-            active={filters.priority}
-            onChange={(val) => setFilters({...filters, priority: val})}
-          />
-          
+
+          {/* Topic & Sport dropdowns */}
+          <div className={styles.filterRow}>
+            <div className={styles.filterSection}>
+              <div className={styles.filterLabel}>Topic</div>
+              <select
+                className={styles.dropdown}
+                value={filters.topic}
+                onChange={(e) => setFilters({...filters, topic: e.target.value})}
+              >
+                <option value="all">All Topics</option>
+                {uniqueTopics.filter(t => t !== 'all').map(topic => (
+                  <option key={topic} value={topic}>{topic}</option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.filterSection}>
+              <div className={styles.filterLabel}>Sport</div>
+              <select
+                className={styles.dropdown}
+                value={filters.sport}
+                onChange={(e) => setFilters({...filters, sport: e.target.value})}
+              >
+                <option value="all">All Sports</option>
+                {uniqueSports.filter(s => s !== 'all').map(sport => (
+                  <option key={sport} value={sport}>{sport}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Priority chips */}
+          <div className={styles.filterSection}>
+            <div className={styles.filterLabel}>Priority</div>
+            <div className={styles.chipsScroll}>
+              {uniquePriorities.map(priority => (
+                <button
+                  key={priority}
+                  className={`${styles.chip} ${filters.priority === priority ? styles.active : ''}`}
+                  onClick={() => setFilters({...filters, priority})}
+                >
+                  {priority === 'all' ? 'All' : priority}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Search */}
           <div className={styles.searchBox}>
+            <span className={styles.searchIcon}>🔍</span>
             <input
               type="text"
+              className={styles.searchInput}
               placeholder="Search articles..."
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
@@ -151,6 +245,9 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <div className={styles.sectionTitle}>Latest Articles</div>
+
+        {/* Articles Grid */}
         <div className={styles.articlesGrid}>
           {filteredArticles.map((article, idx) => (
             <ArticleCard key={article.id} article={article} index={idx} />
@@ -167,57 +264,11 @@ export default function Dashboard() {
   );
 }
 
-function FilterSection({ label, options, active, onChange, emojis = {} }) {
-  return (
-    <div className={styles.filterSection}>
-      <div className={styles.filterLabel}>{label}</div>
-      <div className={styles.filterGroup}>
-        {options.map(option => (
-          <button
-            key={option}
-            className={`${styles.filterBtn} ${active === option ? styles.active : ''}`}
-            onClick={() => onChange(option)}
-          >
-            {emojis[option] ? `${emojis[option]} ` : ''}
-            {option === 'all' ? 'All' : option}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FilterDropdown({ label, options, active, onChange }) {
-  const placeholders = {
-    'Sport': 'All Sports',
-    'Topic': 'All Topics'
-  };
-  
-  return (
-    <div className={styles.filterSection}>
-      <div className={styles.filterLabel}>{label}</div>
-      <select
-        className={styles.filterDropdown}
-        value={active}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {options.map(option => (
-          <option key={option} value={option}>
-            {option === 'all' ? (placeholders[label] || 'All') : option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
 function ArticleCard({ article, index }) {
-  const [showSummary, setShowSummary] = useState(false);
-
   const getPriorityClass = (priority) => {
-    if (priority.includes('High') || priority.includes('🔴')) return styles.priorityHigh;
-    if (priority.includes('Medium') || priority.includes('🟡')) return styles.priorityMedium;
-    return styles.priorityLow;
+    if (priority.includes('High') || priority.includes('🔴')) return 'priorityHigh';
+    if (priority.includes('Medium') || priority.includes('🟡')) return 'priorityMedium';
+    return 'priorityLow';
   };
 
   const regionEmoji = {
@@ -240,25 +291,24 @@ function ArticleCard({ article, index }) {
       <div className={styles.articleCard}>
         <div className={styles.cardHeader}>
           <div className={styles.cardTags}>
-            <span className={`${styles.tag} ${getPriorityClass(article.priority)}`}>
-              {article.priority.replace('🔴 ', '').replace('🟡 ', '').replace('🟢 ', '')}
-            </span>
-            <span className={`${styles.tag} ${styles.sport}`}>{article.sport}</span>
+            <span className={`${styles.tag} ${styles.sportTag}`}>{article.sport}</span>
           </div>
-          <div className={styles.cardRegion}>{regionEmoji}</div>
+          <div className={`${styles.priorityBadge} ${styles[getPriorityClass(article.priority)]}`}>
+            {article.priority.replace('🔴 ', '').replace('🟡 ', '').replace('🟢 ', '')}
+          </div>
         </div>
         
-        <div className={styles.cardDate}>{article.date}</div>
+        <div className={styles.cardDate}>📅 {article.date}</div>
         
-        <h3 className={styles.cardTitle}>
-          {article.title}
-        </h3>
+        <h3 className={styles.cardTitle}>{article.title}</h3>
         
         <p className={styles.cardDescription}>{article.description}</p>
         
-        <div className={styles.cardMeta}>
+        <div className={styles.cardFooter}>
           <span className={styles.cardTopic}>{article.topic}</span>
-          <span>{article.region}</span>
+          <div className={styles.cardRegion}>
+            {regionEmoji} <span>{article.region}</span>
+          </div>
         </div>
       </div>
     </a>
