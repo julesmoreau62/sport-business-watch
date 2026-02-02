@@ -87,6 +87,12 @@
   gap: 24px;
 }
 
+.filterRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
 .filterSection {
   display: flex;
   flex-direction: column;
@@ -136,7 +142,6 @@
 
 .filterDropdown {
   width: 100%;
-  max-width: 300px;
   padding: 12px 20px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
