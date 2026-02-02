@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   // Fetch articles from API
   useEffect(() => {
-    fetch('/api/articles')
+    fetch('/api/articles-sport')
       .then(res => res.json())
       .then(data => {
         setArticles(data);
