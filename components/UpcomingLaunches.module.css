@@ -1,0 +1,155 @@
+.launchesSection {
+  margin-bottom: 60px;
+  padding: 32px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+.launchesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.launchCard {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.launchCard:hover {
+  border-color: var(--accent-secondary);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 136, 255, 0.15);
+}
+
+.launchImage {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.launchImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.launchContent {
+  padding: 20px;
+}
+
+.countdown {
+  margin-bottom: 12px;
+}
+
+.daysCount {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  background: rgba(0, 136, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.today {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red);
+  background: rgba(255, 51, 102, 0.1);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.past {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+.launchName {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.launchMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.metaItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.metaLabel {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.metaValue {
+  color: var(--text-secondary);
+  text-align: right;
+  max-width: 60%;
+}
+
+.watchButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--accent-secondary);
+  color: var(--bg-primary);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+
+.watchButton:hover {
+  background: var(--accent-primary);
+  transform: translateX(2px);
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono), monospace;
+}
+
+@media (max-width: 768px) {
+  .launchesSection {
+    padding: 24px 16px;
+  }
+
+  .launchesGrid {
+    grid-template-columns: 1fr;
+  }
+}
