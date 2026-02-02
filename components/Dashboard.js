@@ -34,14 +34,14 @@ export default function Dashboard() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.pageYOffset;
-      const threshold = 100;
+      const threshold = 50; // Seuil pour considérer qu'on est en haut
 
       if (currentScroll <= threshold) {
+        // Tout en haut de page = visible
         setHeaderVisible(true);
-      } else if (currentScroll > lastScroll) {
-        setHeaderVisible(false);
       } else {
-        setHeaderVisible(true);
+        // Dès qu'on scroll = invisible
+        setHeaderVisible(false);
       }
 
       setLastScroll(currentScroll);
