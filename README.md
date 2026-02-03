@@ -296,13 +296,12 @@ Intelligence gathering is automated via a Python script running daily on GitHub 
 - [ ] Multi-language support (FR, ES, CN)
 - [ ] Mobile applications (iOS, Android)
 - [ ] Webhook integrations (Slack, Discord)
-- [ ] API access for third-party developers
 
 ---
 
 ## Contributing
 
-This is a private academic project. For collaboration inquiries, please contact the repository owner.
+This is a private academic project. For collaboration inquiries, please contact me.
 
 ---
 
@@ -318,7 +317,7 @@ This project is part of a Master's program in Sport Management and is not licens
 
 **Author**: Jules Moreau  
 **Program**: Master 1 - International Sport Administration  
-**Institution**: ISC Paris / Audencia  
+**Institution**: Université de Lille 
 
 **Live Demo**: [Deployed on Netlify](https://sport-business-watch.netlify.app)  
 **Related Project**: [Intelligence Gathering Script](https://github.com/julesmoreau62/veille-sport-biz)
