@@ -4,8 +4,8 @@ export const revalidate = 3600; // Cache for 1 hour
 
 export async function GET(request) {
   try {
-    // Launch Library 2 API - Upcoming launches
-    const response = await fetch('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=10', {
+    // Launch Library 2 API - Upcoming launches (augmentation à 30 pour avoir plus de choix)
+    const response = await fetch('https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=30', {
       headers: {
         'User-Agent': 'Intelligence-Dashboard/1.0'
       }
