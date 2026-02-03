@@ -1,0 +1,328 @@
+.launchesSection {
+  margin-bottom: 60px;
+  padding: 32px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.launchCount {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.priorityCount {
+  background: rgba(0, 136, 255, 0.15);
+  color: var(--accent-secondary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.constellationCount {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.launchesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.launchCard {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.priorityCard {
+  border-color: rgba(0, 136, 255, 0.4);
+}
+
+.priorityBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, rgba(0, 136, 255, 0.9), rgba(0, 255, 136, 0.9));
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 136, 255, 0.3);
+}
+
+.launchCard:hover {
+  border-color: var(--accent-secondary);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 136, 255, 0.15);
+}
+
+.priorityCard:hover {
+  box-shadow: 0 16px 32px rgba(0, 136, 255, 0.25);
+}
+
+.launchImage {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.launchImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.launchContent {
+  padding: 20px;
+}
+
+.countdown {
+  margin-bottom: 12px;
+}
+
+.daysCount {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  background: rgba(0, 136, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.today {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red);
+  background: rgba(255, 51, 102, 0.1);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.past {
+  font-family: var(--font-mono), monospace;
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+.launchName {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.launchMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.metaItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.metaLabel {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.metaValue {
+  color: var(--text-secondary);
+  text-align: right;
+  max-width: 60%;
+}
+
+.watchButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--accent-secondary);
+  color: var(--bg-primary);
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+
+.watchButton:hover {
+  background: var(--accent-primary);
+  transform: translateX(2px);
+}
+
+/* SECTION CONSTELLATION */
+.constellationSection {
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.constellationTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  margin-bottom: 16px;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.constellationGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.constellationCard {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.constellationCard:hover {
+  border-color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+}
+
+.constellationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.constellationCountdown {
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.constellationCountdown .today {
+  color: var(--red);
+  background: transparent;
+  padding: 0;
+}
+
+.constellationDate {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono), monospace;
+}
+
+.constellationName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.constellationInfo {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.constellationLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--accent-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: gap 0.2s;
+}
+
+.constellationLink:hover {
+  gap: 8px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono), monospace;
+}
+
+@media (max-width: 768px) {
+  .launchesSection {
+    padding: 24px 16px;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .launchesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .constellationGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .priorityBadge {
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
