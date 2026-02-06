@@ -22,20 +22,28 @@ export default function SpatialDashboard() {
     fetch('/api/articles-space')
       .then(res => res.json())
       .then(data => {
-        setArticles(data);
+        // Verify data is an array before setting state
+        if (Array.isArray(data)) {
+          setArticles(data);
+        } else {
+          console.error('[v0] API returned non-array data:', data);
+          setArticles([]);
+        }
         setLoading(false);
       })
       .catch(err => {
-        console.error('Failed to fetch articles:', err);
+        console.error('[v0] Failed to fetch articles:', err);
+        setArticles([]);
         setLoading(false);
       });
   }, []);
 
-  const uniqueAgencies = ['all', ...new Set(articles.map(a => a.agency))];
-  const uniqueMissions = ['all', ...new Set(articles.map(a => a.mission))];
-  const uniquePriorities = ['all', ...new Set(articles.map(a => a.priority))];
+  // Safety check: ensure articles is an array before mapping
+  const uniqueAgencies = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.agency) : [])];
+  const uniqueMissions = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.mission) : [])];
+  const uniquePriorities = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.priority) : [])];
 
-  const filteredArticles = articles.filter(article => {
+  const filteredArticles = Array.isArray(articles) ? articles.filter(article => {
     const matchesAgency = filters.agency === 'all' || article.agency === filters.agency;
     const matchesMission = filters.mission === 'all' || article.mission === filters.mission;
     const matchesPriority = filters.priority === 'all' || article.priority === filters.priority;
@@ -43,7 +51,7 @@ export default function SpatialDashboard() {
       article.title.toLowerCase().includes(filters.search.toLowerCase()) ||
       (article.description && article.description.toLowerCase().includes(filters.search.toLowerCase()));
     return matchesAgency && matchesMission && matchesPriority && matchesSearch;
-  });
+  }) : [];
 
   const highPriorityCount = filteredArticles.filter(a =>
     a.priority.includes('High') || a.priority.includes('\uD83D\uDD34')

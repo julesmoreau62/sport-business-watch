@@ -30,21 +30,29 @@ export default function Dashboard() {
     fetch('/api/articles-sport')
       .then(res => res.json())
       .then(data => {
-        setArticles(data);
+        // Verify data is an array before setting state
+        if (Array.isArray(data)) {
+          setArticles(data);
+        } else {
+          console.error('[v0] API returned non-array data:', data);
+          setArticles([]);
+        }
         setLoading(false);
       })
       .catch(err => {
-        console.error('Failed to fetch articles:', err);
+        console.error('[v0] Failed to fetch articles:', err);
+        setArticles([]);
         setLoading(false);
       });
   }, []);
 
-  const uniqueRegions = ['all', ...new Set(articles.map(a => a.region))];
-  const uniqueSports = ['all', ...new Set(articles.map(a => a.sport))];
-  const uniqueTopics = ['all', ...new Set(articles.map(a => a.topic))];
-  const uniquePriorities = ['all', ...new Set(articles.map(a => a.priority))];
+  // Safety check: ensure articles is an array before mapping
+  const uniqueRegions = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.region) : [])];
+  const uniqueSports = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.sport) : [])];
+  const uniqueTopics = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.topic) : [])];
+  const uniquePriorities = ['all', ...new Set(Array.isArray(articles) ? articles.map(a => a.priority) : [])];
 
-  const filteredArticles = articles.filter(article => {
+  const filteredArticles = Array.isArray(articles) ? articles.filter(article => {
     const matchesRegion = filters.region === 'all' || article.region === filters.region;
     const matchesSport = filters.sport === 'all' || article.sport === filters.sport;
     const matchesTopic = filters.topic === 'all' || article.topic === filters.topic;
@@ -53,18 +61,20 @@ export default function Dashboard() {
       article.title.toLowerCase().includes(filters.search.toLowerCase()) ||
       (article.description && article.description.toLowerCase().includes(filters.search.toLowerCase()));
     return matchesRegion && matchesSport && matchesTopic && matchesPriority && matchesSearch;
-  });
+  }) : [];
 
   const highPriorityCount = filteredArticles.filter(a =>
     a.priority.includes('High') || a.priority.includes('\uD83D\uDD34')
   ).length;
 
   const topicCounts = {};
-  articles.forEach(article => {
-    if (article.topic) {
-      topicCounts[article.topic] = (topicCounts[article.topic] || 0) + 1;
-    }
-  });
+  if (Array.isArray(articles)) {
+    articles.forEach(article => {
+      if (article.topic) {
+        topicCounts[article.topic] = (topicCounts[article.topic] || 0) + 1;
+      }
+    });
+  }
   const trendingTopics = Object.entries(topicCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
