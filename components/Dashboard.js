@@ -109,24 +109,30 @@ export default function Dashboard() {
       </header>
 
       <div className={styles.container}>
-        {/* Compact Stats Row */}
-        <div className={styles.compactStats}>
-          <div className={`${styles.statCard} ${styles.statOrange}`}>
-            <Newspaper size={20} strokeWidth={1.5} />
-            <span className={styles.statValue}>{articles.length > 0 ? filteredArticles.length : 124}</span>
-            <span className={styles.statLabel}>ARTICLES</span>
+        {/* Compact Stats Badges */}
+        <div className={styles.statBadges}>
+          <div className={`${styles.badge} ${styles.badgeOrange}`}>
+            <Newspaper size={20} strokeWidth={1.5} className={styles.badgeIcon} />
+            <div className={styles.badgeText}>
+              <span className={styles.badgeValue}>{articles.length > 0 ? filteredArticles.length : 124}</span>
+              <span className={styles.badgeLabel}>ARTICLES</span>
+            </div>
           </div>
 
-          <div className={`${styles.statCard} ${styles.statRed}`}>
-            <AlertTriangle size={20} strokeWidth={1.5} />
-            <span className={styles.statValue}>{articles.length > 0 ? highPriorityCount : 12}</span>
-            <span className={styles.statLabel}>HIGH PRIORITY</span>
+          <div className={`${styles.badge} ${styles.badgeRed}`}>
+            <AlertTriangle size={20} strokeWidth={1.5} className={styles.badgeIcon} />
+            <div className={styles.badgeText}>
+              <span className={styles.badgeValue}>{articles.length > 0 ? highPriorityCount : 12}</span>
+              <span className={styles.badgeLabel}>HIGH PRIORITY</span>
+            </div>
           </div>
 
-          <div className={`${styles.statCard} ${styles.statCyan}`}>
-            <Globe size={20} strokeWidth={1.5} />
-            <span className={styles.statValue}>27</span>
-            <span className={styles.statLabel}>SOURCES</span>
+          <div className={`${styles.badge} ${styles.badgeCyan}`}>
+            <Globe size={20} strokeWidth={1.5} className={styles.badgeIcon} />
+            <div className={styles.badgeText}>
+              <span className={styles.badgeValue}>27</span>
+              <span className={styles.badgeLabel}>SOURCES</span>
+            </div>
           </div>
         </div>
 
