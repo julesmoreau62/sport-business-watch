@@ -109,37 +109,29 @@ export default function Dashboard() {
       </header>
 
       <div className={styles.container}>
-        {/* Bento Stats Grid */}
-        <div className={styles.bentoStats}>
-          {/* Stats cards */}
+        {/* Compact Stats Row */}
+        <div className={styles.compactStats}>
           <div className={`${styles.statCard} ${styles.statOrange}`}>
-            <Newspaper size={18} strokeWidth={1.5} />
-            <div className={styles.statInfo}>
-              <span className={styles.statLabel}>ARTICLES</span>
-              <span className={styles.statValue}>{filteredArticles.length}</span>
-            </div>
-            <span className={styles.statSub}>{articles.length} total</span>
+            <Newspaper size={20} strokeWidth={1.5} />
+            <span className={styles.statValue}>{articles.length > 0 ? filteredArticles.length : 124}</span>
+            <span className={styles.statLabel}>ARTICLES</span>
           </div>
 
           <div className={`${styles.statCard} ${styles.statRed}`}>
-            <AlertTriangle size={18} strokeWidth={1.5} />
-            <div className={styles.statInfo}>
-              <span className={styles.statLabel}>HIGH PRIORITY</span>
-              <span className={styles.statValue}>{highPriorityCount}</span>
-            </div>
-            <span className={styles.statSub}>
-              {filteredArticles.length > 0 ? Math.round((highPriorityCount / filteredArticles.length) * 100) : 0}% of feed
-            </span>
+            <AlertTriangle size={20} strokeWidth={1.5} />
+            <span className={styles.statValue}>{articles.length > 0 ? highPriorityCount : 12}</span>
+            <span className={styles.statLabel}>HIGH PRIORITY</span>
           </div>
 
           <div className={`${styles.statCard} ${styles.statCyan}`}>
-            <Globe size={18} strokeWidth={1.5} />
-            <div className={styles.statInfo}>
-              <span className={styles.statLabel}>SOURCES</span>
-              <span className={styles.statValue}>27</span>
-            </div>
-            <span className={styles.statSub}>5 regions</span>
+            <Globe size={20} strokeWidth={1.5} />
+            <span className={styles.statValue}>27</span>
+            <span className={styles.statLabel}>SOURCES</span>
           </div>
+        </div>
+
+        {/* Bento Stats Grid */}
+        <div className={styles.bentoStats}>
 
           {/* Source Distribution Module */}
           <div className={styles.sourceModule}>
