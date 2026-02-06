@@ -5,18 +5,24 @@
 }
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --bg-tertiary: #1a1a1a;
-  --accent-primary: #00ff88;
-  --accent-secondary: #0088ff;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-tertiary: #606060;
-  --border: #2a2a2a;
-  --red: #ff3366;
-  --orange: #ff8833;
-  --green: #00ff88;
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #111111;
+  --bg-card: #0d0d0d;
+  --accent-orange: #ff6a00;
+  --accent-orange-dim: rgba(255, 106, 0, 0.15);
+  --accent-cyan: #00d4ff;
+  --accent-cyan-dim: rgba(0, 212, 255, 0.15);
+  --text-primary: #e8e8e8;
+  --text-secondary: #808080;
+  --text-tertiary: #4a4a4a;
+  --border: #1a1a1a;
+  --border-glow-orange: rgba(255, 106, 0, 0.3);
+  --border-glow-cyan: rgba(0, 212, 255, 0.3);
+  --red: #ff3333;
+  --green: #33ff66;
+  --yellow: #ffcc00;
+  --grid-color: rgba(255, 255, 255, 0.03);
 }
 
 body {
@@ -27,20 +33,51 @@ body {
   overflow-x: hidden;
 }
 
+/* Global Grid Mesh Background */
+.grid-mesh {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Selection */
+::selection {
+  background: rgba(255, 106, 0, 0.3);
+  color: var(--text-primary);
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 0.03; }
   50% { opacity: 0.06; }
 }
 
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -57,4 +94,19 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes countPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
