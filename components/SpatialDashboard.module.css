@@ -123,18 +123,12 @@
   padding: 24px;
 }
 
-/* STAT BADGES - Horizontal Layout */
+/* STAT BADGES - Always 3 Columns */
 .statBadges {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 20px;
-}
-
-@media (min-width: 768px) {
-  .statBadges {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .badge {
@@ -629,14 +623,29 @@
     font-size: 14px;
   }
 
+  /* Keep 3 columns on mobile */
   .statBadges {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 8px;
   }
 
   .badge {
-    height: 70px;
-    padding: 14px 18px;
+    height: 60px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .badgeIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .badgeValue {
+    font-size: 20px;
+  }
+
+  .badgeLabel {
+    font-size: 8px;
+    letter-spacing: 0.08em;
   }
 
   .statsRow {
