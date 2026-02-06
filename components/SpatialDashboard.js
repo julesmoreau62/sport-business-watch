@@ -1,12 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ArrowLeft, Search, Filter, AlertTriangle, Satellite, Radio, ChevronRight, Rocket } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import styles from './SpatialDashboard.module.css';
 import UpcomingLaunches from './UpcomingLaunches';
 
 export default function SpatialDashboard() {
+  const router = useRouter();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     agency: 'all',
     mission: 'all',
@@ -35,114 +39,145 @@ export default function SpatialDashboard() {
     const matchesAgency = filters.agency === 'all' || article.agency === filters.agency;
     const matchesMission = filters.mission === 'all' || article.mission === filters.mission;
     const matchesPriority = filters.priority === 'all' || article.priority === filters.priority;
-    const matchesSearch = filters.search === '' || 
+    const matchesSearch = filters.search === '' ||
       article.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-      article.description.toLowerCase().includes(filters.search.toLowerCase());
-    
+      (article.description && article.description.toLowerCase().includes(filters.search.toLowerCase()));
     return matchesAgency && matchesMission && matchesPriority && matchesSearch;
   });
 
-  const highPriorityCount = filteredArticles.filter(a => 
-    a.priority.includes('High') || a.priority.includes('🔴')
+  const highPriorityCount = filteredArticles.filter(a =>
+    a.priority.includes('High') || a.priority.includes('\uD83D\uDD34')
   ).length;
 
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div className={styles.loading}>Loading articles...</div>
+        <div className={styles.loadingBox}>
+          <div className={styles.loadingPulse} />
+          <span className={styles.loadingText}>ACQUIRING TELEMETRY...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
-      <div className={styles.gradientBg} />
-      
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <div className={styles.headerContent}>
-            <div className={styles.logoSection}>
-              <div className={styles.logo}>🚀</div>
-              <h1>Spatial Watch</h1>
-            </div>
-            <div className={styles.headerStats}>
-              <div className={styles.stat}>
-                <div className={styles.statLabel}>Articles</div>
-                <div className={styles.statValue}>{filteredArticles.length}</div>
-              </div>
-              <div className={styles.stat}>
-                <div className={styles.statLabel}>High Priority</div>
-                <div className={styles.statValue}>{highPriorityCount}</div>
-              </div>
-              <div className={styles.stat}>
-                <div className={styles.statLabel}>Sources</div>
-                <div className={styles.statValue}>5</div>
-              </div>
-            </div>
-          </div>
+    <div className={styles.page}>
+      {/* Top Bar */}
+      <header className={styles.topBar}>
+        <button className={styles.backBtn} onClick={() => router.push('/')}>
+          <ArrowLeft size={16} />
+          <span>INTEL HQ</span>
+        </button>
+        <div className={styles.topTitle}>
+          <span className={styles.topLabel}>MODULE_02</span>
+          <h1 className={styles.topName}>SPATIAL OPS</h1>
+        </div>
+        <div className={styles.topIndicator}>
+          <span className={styles.liveDot} />
+          TRACKING
         </div>
       </header>
 
       <div className={styles.container}>
-        <UpcomingLaunches />
-
-        <div className={styles.filters}>
-          <FilterSection
-            label="Agency"
-            options={uniqueAgencies}
-            active={filters.agency}
-            onChange={(val) => setFilters({...filters, agency: val})}
-          />
-          
-          <FilterSection
-            label="Mission Type"
-            options={uniqueMissions}
-            active={filters.mission}
-            onChange={(val) => setFilters({...filters, mission: val})}
-          />
-          
-          <FilterSection
-            label="Priority"
-            options={uniquePriorities}
-            active={filters.priority}
-            onChange={(val) => setFilters({...filters, priority: val})}
-          />
-          
-          <div className={styles.searchBox}>
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={filters.search}
-              onChange={(e) => setFilters({...filters, search: e.target.value})}
-            />
+        {/* Stats row */}
+        <div className={styles.statsRow}>
+          <div className={`${styles.statCard} ${styles.statCyan}`}>
+            <Satellite size={18} strokeWidth={1.5} />
+            <div className={styles.statInfo}>
+              <span className={styles.statLabel}>ARTICLES</span>
+              <span className={styles.statValue}>{filteredArticles.length}</span>
+            </div>
+          </div>
+          <div className={`${styles.statCard} ${styles.statRed}`}>
+            <AlertTriangle size={18} strokeWidth={1.5} />
+            <div className={styles.statInfo}>
+              <span className={styles.statLabel}>HIGH PRIORITY</span>
+              <span className={styles.statValue}>{highPriorityCount}</span>
+            </div>
+          </div>
+          <div className={`${styles.statCard} ${styles.statGreen}`}>
+            <Radio size={18} strokeWidth={1.5} />
+            <div className={styles.statInfo}>
+              <span className={styles.statLabel}>SOURCES</span>
+              <span className={styles.statValue}>5</span>
+            </div>
           </div>
         </div>
 
+        {/* Mission Control - Launch Tracker */}
+        <UpcomingLaunches />
+
+        {/* Filters */}
+        <div className={styles.filtersBar}>
+          <div className={styles.searchBox}>
+            <Search size={16} />
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Search space intel..."
+              value={filters.search}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+            />
+          </div>
+          <button
+            className={`${styles.filterToggle} ${showFilters ? styles.filterActive : ''}`}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={16} />
+            <span>FILTERS</span>
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className={styles.filtersPanel}>
+            <FilterChips label="Agency" options={uniqueAgencies} active={filters.agency} onChange={(val) => setFilters({ ...filters, agency: val })} />
+            <FilterChips label="Mission Type" options={uniqueMissions} active={filters.mission} onChange={(val) => setFilters({ ...filters, mission: val })} />
+            <FilterChips label="Priority" options={uniquePriorities} active={filters.priority} onChange={(val) => setFilters({ ...filters, priority: val })} />
+          </div>
+        )}
+
+        {/* Section label */}
+        <div className={styles.sectionLabel}>
+          <span className={styles.sectionLine} />
+          <span className={styles.sectionText}>SPACE INTEL // {filteredArticles.length} RESULTS</span>
+          <span className={styles.sectionLine} />
+        </div>
+
+        {/* Articles Grid */}
         <div className={styles.articlesGrid}>
           {filteredArticles.map((article, idx) => (
-            <ArticleCard key={article.id} article={article} index={idx} />
+            <SpaceArticleCard key={article.id} article={article} index={idx} />
           ))}
         </div>
 
         {filteredArticles.length === 0 && (
           <div className={styles.noResults}>
-            No articles found matching your filters.
+            <Rocket size={24} />
+            <span>No articles match current filters.</span>
           </div>
         )}
       </div>
-    </>
+
+      {/* Footer */}
+      <footer className={styles.sysFooter}>
+        <span className={styles.sysStatus}>
+          <span className={styles.sysDot} />
+          SYS: OPERATIONAL
+        </span>
+      </footer>
+    </div>
   );
 }
 
-function FilterSection({ label, options, active, onChange }) {
+function FilterChips({ label, options, active, onChange }) {
   return (
-    <div className={styles.filterSection}>
-      <div className={styles.filterLabel}>{label}</div>
-      <div className={styles.filterGroup}>
+    <div className={styles.chipSection}>
+      <span className={styles.chipLabel}>{label}</span>
+      <div className={styles.chipRow}>
         {options.map(option => (
           <button
             key={option}
-            className={`${styles.filterBtn} ${active === option ? styles.active : ''}`}
+            className={`${styles.chip} ${active === option ? styles.chipActive : ''}`}
             onClick={() => onChange(option)}
           >
             {option === 'all' ? 'All' : option}
@@ -153,44 +188,42 @@ function FilterSection({ label, options, active, onChange }) {
   );
 }
 
-function ArticleCard({ article, index }) {
-  const getPriorityClass = (priority) => {
-    if (priority.includes('High') || priority.includes('🔴')) return styles.priorityHigh;
-    if (priority.includes('Medium') || priority.includes('🟡')) return styles.priorityMedium;
-    return styles.priorityLow;
-  };
+function SpaceArticleCard({ article, index }) {
+  const isHigh = article.priority.includes('High') || article.priority.includes('\uD83D\uDD34');
+  const isMedium = article.priority.includes('Medium') || article.priority.includes('\uD83D\uDFE1');
+  const priorityClass = isHigh ? styles.prioHigh : isMedium ? styles.prioMedium : styles.prioLow;
+  const priorityText = isHigh ? 'HIGH' : isMedium ? 'MED' : 'LOW';
 
   return (
-    <a 
+    <a
       href={article.link}
       target="_blank"
       rel="noopener noreferrer"
-      className={styles.articleCardLink}
-      style={{ animationDelay: `${index * 0.05}s` }}
+      className={styles.articleLink}
+      style={{ animationDelay: `${index * 0.04}s` }}
     >
-      <div className={styles.articleCard}>
-        <div className={styles.cardHeader}>
-          <div className={styles.cardTags}>
-            <span className={`${styles.tag} ${getPriorityClass(article.priority)}`}>
-              {article.priority.replace('🔴 ', '').replace('🟡 ', '').replace('🟢 ', '')}
-            </span>
-            <span className={`${styles.tag} ${styles.mission}`}>{article.mission}</span>
+      <article className={`${styles.articleCard} ${isHigh ? styles.articleHigh : ''}`}>
+        <div className={styles.articleTop}>
+          <div className={`${styles.prioBadge} ${priorityClass}`}>
+            {isHigh && <AlertTriangle size={10} />}
+            {priorityText}
           </div>
-          <div className={styles.cardAgency}>{article.agency}</div>
+          <span className={styles.articleAgency}>{article.agency}</span>
         </div>
-        
-        <div className={styles.cardDate}>{article.date}</div>
-        
-        <h3 className={styles.cardTitle}>
-          {article.title}
-        </h3>
-        
-        <p className={styles.cardDescription}>{article.description}</p>
-        
-        <div className={styles.cardMeta}>
-          <span className={styles.cardTopic}>{article.topic}</span>
+        <span className={styles.articleDate}>{article.date}</span>
+        <h3 className={styles.articleTitle}>{article.title}</h3>
+        {article.description && (
+          <p className={styles.articleDesc}>{article.description}</p>
+        )}
+        <div className={styles.articleMeta}>
+          <span className={styles.metaMission}>{article.mission}</span>
+          <span className={styles.metaTopic}>{article.topic}</span>
         </div>
-      </div>
+        <div className={styles.articleAction}>
+          <span>READ INTEL</span>
+          <ChevronRight size={14} />
+        </div>
+      </article>
     </a>
   );
 }

@@ -1,13 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ArrowLeft, Search, Filter, AlertTriangle, TrendingUp, Globe, Newspaper, ChevronRight, MapPin, BarChart3 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import styles from './Dashboard.module.css';
 
+const SOURCE_REGIONS = {
+  'North America': { count: 8, color: 'var(--accent-orange)' },
+  'Europe': { count: 7, color: 'var(--accent-orange)' },
+  'Asia-Pacific': { count: 5, color: 'var(--accent-cyan)' },
+  'Middle East & Africa': { count: 4, color: 'var(--accent-cyan)' },
+  'Latin America': { count: 3, color: 'var(--text-secondary)' },
+};
+
 export default function Dashboard() {
+  const router = useRouter();
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [headerVisible, setHeaderVisible] = useState(true);
-  const [lastScroll, setLastScroll] = useState(0);
   const [filters, setFilters] = useState({
     region: 'all',
     sport: 'all',
@@ -15,8 +24,8 @@ export default function Dashboard() {
     priority: 'all',
     search: ''
   });
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch articles from API
   useEffect(() => {
     fetch('/api/articles-sport')
       .then(res => res.json())
@@ -30,52 +39,26 @@ export default function Dashboard() {
       });
   }, []);
 
-  // Handle scroll to hide/show header
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.pageYOffset;
-      const threshold = 50; // Seuil pour considérer qu'on est en haut
-
-      if (currentScroll <= threshold) {
-        // Tout en haut de page = visible
-        setHeaderVisible(true);
-      } else {
-        // Dès qu'on scroll = invisible
-        setHeaderVisible(false);
-      }
-
-      setLastScroll(currentScroll);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScroll]);
-
-  // Extract unique values for dynamic filters
   const uniqueRegions = ['all', ...new Set(articles.map(a => a.region))];
   const uniqueSports = ['all', ...new Set(articles.map(a => a.sport))];
   const uniqueTopics = ['all', ...new Set(articles.map(a => a.topic))];
   const uniquePriorities = ['all', ...new Set(articles.map(a => a.priority))];
 
-  // Filter articles
   const filteredArticles = articles.filter(article => {
     const matchesRegion = filters.region === 'all' || article.region === filters.region;
     const matchesSport = filters.sport === 'all' || article.sport === filters.sport;
     const matchesTopic = filters.topic === 'all' || article.topic === filters.topic;
     const matchesPriority = filters.priority === 'all' || article.priority === filters.priority;
-    const matchesSearch = filters.search === '' || 
+    const matchesSearch = filters.search === '' ||
       article.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-      article.description.toLowerCase().includes(filters.search.toLowerCase());
-    
+      (article.description && article.description.toLowerCase().includes(filters.search.toLowerCase()));
     return matchesRegion && matchesSport && matchesTopic && matchesPriority && matchesSearch;
   });
 
-  // Count high priority articles
-  const highPriorityCount = filteredArticles.filter(a => 
-    a.priority.includes('High') || a.priority.includes('🔴')
+  const highPriorityCount = filteredArticles.filter(a =>
+    a.priority.includes('High') || a.priority.includes('\uD83D\uDD34')
   ).length;
 
-  // Calculate trending topics (top 5)
   const topicCounts = {};
   articles.forEach(article => {
     if (article.topic) {
@@ -86,168 +69,172 @@ export default function Dashboard() {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  const regionEmojis = {
-    'North America': '🌎',
-    'Europe': '🇪🇺',
-    'Asia-Pacific': '🌏',
-    'Middle East & Africa': '🌍',
-    'Latin America': '🌎',
-    'Global': '🌐'
-  };
-
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div className={styles.loading}>Loading articles...</div>
+        <div className={styles.loadingBox}>
+          <div className={styles.loadingPulse} />
+          <span className={styles.loadingText}>FETCHING INTEL...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
-      <div className={styles.gradientBg} />
-      
-      <header className={`${styles.header} ${!headerVisible ? styles.headerHidden : ''}`}>
-        <div className={styles.container}>
-          {/* Logo Section */}
-          <div className={styles.headerTop}>
-            <div className={styles.logoSection}>
-              <div className={styles.logoText}>Sport Business</div>
-              <div className={styles.logoSubtitle}>Intelligence Hub</div>
+    <div className={styles.page}>
+      {/* Top Bar */}
+      <header className={styles.topBar}>
+        <button className={styles.backBtn} onClick={() => router.push('/')}>
+          <ArrowLeft size={16} />
+          <span>INTEL HQ</span>
+        </button>
+        <div className={styles.topTitle}>
+          <span className={styles.topLabel}>MODULE_01</span>
+          <h1 className={styles.topName}>SPORT BUSINESS</h1>
+        </div>
+        <div className={styles.topIndicator}>
+          <span className={styles.liveDot} />
+          LIVE
+        </div>
+      </header>
+
+      <div className={styles.container}>
+        {/* Bento Stats Grid */}
+        <div className={styles.bentoStats}>
+          {/* Stats cards */}
+          <div className={`${styles.statCard} ${styles.statOrange}`}>
+            <Newspaper size={18} strokeWidth={1.5} />
+            <div className={styles.statInfo}>
+              <span className={styles.statLabel}>ARTICLES</span>
+              <span className={styles.statValue}>{filteredArticles.length}</span>
             </div>
+            <span className={styles.statSub}>{articles.length} total</span>
           </div>
 
-          {/* Stats Grid */}
-          <div className={styles.statsGrid}>
-            <div className={styles.statCard}>
-              <div className={styles.statLabel}>Articles</div>
-              <div className={`${styles.statValue} ${styles.accent}`}>{filteredArticles.length}</div>
-              <div className={styles.statChange}>↗ {articles.length} total</div>
+          <div className={`${styles.statCard} ${styles.statRed}`}>
+            <AlertTriangle size={18} strokeWidth={1.5} />
+            <div className={styles.statInfo}>
+              <span className={styles.statLabel}>HIGH PRIORITY</span>
+              <span className={styles.statValue}>{highPriorityCount}</span>
             </div>
-            <div className={styles.statCard}>
-              <div className={styles.statLabel}>High Priority</div>
-              <div className={`${styles.statValue} ${styles.red}`}>{highPriorityCount}</div>
-              <div className={styles.statChange}>
-                {highPriorityCount > 0 ? '↗' : '↘'} {Math.round((highPriorityCount / filteredArticles.length) * 100)}% of total
-              </div>
-            </div>
-            <div className={styles.statCard}>
-              <div className={styles.statLabel}>Sources</div>
-              <div className={`${styles.statValue} ${styles.blue}`}>35</div>
-              <div className={styles.statChange}>↗ Active</div>
-            </div>
+            <span className={styles.statSub}>
+              {filteredArticles.length > 0 ? Math.round((highPriorityCount / filteredArticles.length) * 100) : 0}% of feed
+            </span>
           </div>
 
-          {/* Trending Section */}
-          {trendingTopics.length > 0 && (
-            <div className={styles.trendingSection}>
-              <div className={styles.trendingHeader}>
-                <div className={styles.trendingTitle}>🔥 Trending This Week</div>
-                <div className={styles.trendingPeriod}>
-                  {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </div>
-              </div>
-              <div className={styles.trendingTags}>
-                {trendingTopics.map(([topic, count], idx) => (
-                  <div 
-                    key={topic} 
-                    className={`${styles.trendingTag} ${idx === 0 ? styles.hot : ''}`}
-                    onClick={() => setFilters({...filters, topic})}
-                  >
-                    <span>{topic}</span>
-                    <span className={styles.count}>{count}</span>
+          <div className={`${styles.statCard} ${styles.statCyan}`}>
+            <Globe size={18} strokeWidth={1.5} />
+            <div className={styles.statInfo}>
+              <span className={styles.statLabel}>SOURCES</span>
+              <span className={styles.statValue}>27</span>
+            </div>
+            <span className={styles.statSub}>5 regions</span>
+          </div>
+
+          {/* Source Distribution Module */}
+          <div className={styles.sourceModule}>
+            <div className={styles.sourceHeader}>
+              <BarChart3 size={16} strokeWidth={1.5} />
+              <span>SOURCE DISTRIBUTION</span>
+            </div>
+            <div className={styles.sourceList}>
+              {Object.entries(SOURCE_REGIONS).map(([region, data]) => (
+                <div key={region} className={styles.sourceRow}>
+                  <span className={styles.sourceRegion}>{region}</span>
+                  <div className={styles.sourceBarTrack}>
+                    <div
+                      className={styles.sourceBar}
+                      style={{
+                        width: `${(data.count / 8) * 100}%`,
+                        background: data.color
+                      }}
+                    />
                   </div>
+                  <span className={styles.sourceCount}>{data.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Trending Topics */}
+          {trendingTopics.length > 0 && (
+            <div className={styles.trendingModule}>
+              <div className={styles.trendingHeader}>
+                <TrendingUp size={16} strokeWidth={1.5} />
+                <span>TRENDING</span>
+              </div>
+              <div className={styles.trendingList}>
+                {trendingTopics.map(([topic, count], idx) => (
+                  <button
+                    key={topic}
+                    className={`${styles.trendingTag} ${idx === 0 ? styles.trendingHot : ''}`}
+                    onClick={() => setFilters({ ...filters, topic })}
+                  >
+                    <span className={styles.trendingName}>{topic}</span>
+                    <span className={styles.trendingCount}>{count}</span>
+                  </button>
                 ))}
               </div>
             </div>
           )}
         </div>
-      </header>
 
-      {/* Spacer for fixed header */}
-      <div className={styles.headerSpacer}></div>
-
-      <div className={styles.container}>
         {/* Filters */}
-        <div className={styles.filters}>
-          {/* Region chips */}
-          <div className={styles.filterSection}>
-            <div className={styles.filterLabel}>Region</div>
-            <div className={styles.chipsScroll}>
-              {uniqueRegions.map(region => (
-                <button
-                  key={region}
-                  className={`${styles.chip} ${filters.region === region ? styles.active : ''}`}
-                  onClick={() => setFilters({...filters, region})}
-                >
-                  {region === 'all' ? 'All' : `${regionEmojis[region] || ''} ${region}`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Topic & Sport dropdowns */}
-          <div className={styles.filterRow}>
-            <div className={styles.filterSection}>
-              <div className={styles.filterLabel}>Topic</div>
-              <select
-                className={styles.dropdown}
-                value={filters.topic}
-                onChange={(e) => setFilters({...filters, topic: e.target.value})}
-              >
-                <option value="all">All Topics</option>
-                {uniqueTopics.filter(t => t !== 'all').map(topic => (
-                  <option key={topic} value={topic}>{topic}</option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.filterSection}>
-              <div className={styles.filterLabel}>Sport</div>
-              <select
-                className={styles.dropdown}
-                value={filters.sport}
-                onChange={(e) => setFilters({...filters, sport: e.target.value})}
-              >
-                <option value="all">All Sports</option>
-                {uniqueSports.filter(s => s !== 'all').map(sport => (
-                  <option key={sport} value={sport}>{sport}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Priority chips */}
-          <div className={styles.filterSection}>
-            <div className={styles.filterLabel}>Priority</div>
-            <div className={styles.chipsScroll}>
-              {uniquePriorities.map(priority => (
-                <button
-                  key={priority}
-                  className={`${styles.chip} ${filters.priority === priority ? styles.active : ''}`}
-                  onClick={() => setFilters({...filters, priority})}
-                >
-                  {priority === 'all' ? 'All' : priority}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Search */}
+        <div className={styles.filtersBar}>
           <div className={styles.searchBox}>
-            <span className={styles.searchIcon}>🔍</span>
+            <Search size={16} />
             <input
               type="text"
               className={styles.searchInput}
-              placeholder="Search articles..."
+              placeholder="Search intelligence feed..."
               value={filters.search}
-              onChange={(e) => setFilters({...filters, search: e.target.value})}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
             />
           </div>
+          <button
+            className={`${styles.filterToggle} ${showFilters ? styles.filterActive : ''}`}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={16} />
+            <span>FILTERS</span>
+          </button>
         </div>
 
-        <div className={styles.sectionTitle}>Latest Articles</div>
+        {showFilters && (
+          <div className={styles.filtersPanel}>
+            <FilterChips label="Region" options={uniqueRegions} active={filters.region} onChange={(val) => setFilters({ ...filters, region: val })} />
+            <FilterChips label="Priority" options={uniquePriorities} active={filters.priority} onChange={(val) => setFilters({ ...filters, priority: val })} />
+            <div className={styles.filterDropdowns}>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Topic</label>
+                <select className={styles.dropdown} value={filters.topic} onChange={(e) => setFilters({ ...filters, topic: e.target.value })}>
+                  <option value="all">All Topics</option>
+                  {uniqueTopics.filter(t => t !== 'all').map(topic => (
+                    <option key={topic} value={topic}>{topic}</option>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Sport</label>
+                <select className={styles.dropdown} value={filters.sport} onChange={(e) => setFilters({ ...filters, sport: e.target.value })}>
+                  <option value="all">All Sports</option>
+                  {uniqueSports.filter(s => s !== 'all').map(sport => (
+                    <option key={sport} value={sport}>{sport}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
 
-        {/* Articles Grid */}
+        {/* Section label */}
+        <div className={styles.sectionLabel}>
+          <span className={styles.sectionLine} />
+          <span className={styles.sectionText}>INTEL FEED // {filteredArticles.length} RESULTS</span>
+          <span className={styles.sectionLine} />
+        </div>
+
+        {/* Articles Bento Grid */}
         <div className={styles.articlesGrid}>
           {filteredArticles.map((article, idx) => (
             <ArticleCard key={article.id} article={article} index={idx} />
@@ -256,61 +243,82 @@ export default function Dashboard() {
 
         {filteredArticles.length === 0 && (
           <div className={styles.noResults}>
-            No articles found matching your filters.
+            <AlertTriangle size={24} />
+            <span>No articles match current filters.</span>
           </div>
         )}
       </div>
-    </>
+
+      {/* Footer */}
+      <footer className={styles.sysFooter}>
+        <span className={styles.sysStatus}>
+          <span className={styles.sysDot} />
+          SYS: OPERATIONAL
+        </span>
+      </footer>
+    </div>
+  );
+}
+
+function FilterChips({ label, options, active, onChange }) {
+  return (
+    <div className={styles.chipSection}>
+      <span className={styles.chipLabel}>{label}</span>
+      <div className={styles.chipRow}>
+        {options.map(option => (
+          <button
+            key={option}
+            className={`${styles.chip} ${active === option ? styles.chipActive : ''}`}
+            onClick={() => onChange(option)}
+          >
+            {option === 'all' ? 'All' : option}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
 function ArticleCard({ article, index }) {
-  const getPriorityClass = (priority) => {
-    if (priority.includes('High') || priority.includes('🔴')) return 'priorityHigh';
-    if (priority.includes('Medium') || priority.includes('🟡')) return 'priorityMedium';
-    return 'priorityLow';
-  };
+  const isHigh = article.priority.includes('High') || article.priority.includes('\uD83D\uDD34');
+  const isMedium = article.priority.includes('Medium') || article.priority.includes('\uD83D\uDFE1');
 
-  const regionEmoji = {
-    'North America': '🌎',
-    'Europe': '🇪🇺',
-    'Asia-Pacific': '🌏',
-    'Middle East & Africa': '🌍',
-    'Latin America': '🌎',
-    'Global': '🌐'
-  }[article.region] || '🌐';
+  const priorityClass = isHigh ? styles.prioHigh : isMedium ? styles.prioMedium : styles.prioLow;
+  const priorityText = isHigh ? 'HIGH' : isMedium ? 'MED' : 'LOW';
 
   return (
-    <a 
+    <a
       href={article.link}
       target="_blank"
       rel="noopener noreferrer"
-      className={styles.articleCardLink}
-      style={{ animationDelay: `${index * 0.05}s` }}
+      className={styles.articleLink}
+      style={{ animationDelay: `${index * 0.04}s` }}
     >
-      <div className={styles.articleCard}>
-        <div className={styles.cardHeader}>
-          <div className={styles.cardTags}>
-            <span className={`${styles.tag} ${styles.sportTag}`}>{article.sport}</span>
+      <article className={`${styles.articleCard} ${isHigh ? styles.articleHigh : ''}`}>
+        <div className={styles.articleTop}>
+          <div className={`${styles.prioBadge} ${priorityClass}`}>
+            {isHigh && <AlertTriangle size={10} />}
+            {priorityText}
           </div>
-          <div className={`${styles.priorityBadge} ${styles[getPriorityClass(article.priority)]}`}>
-            {article.priority.replace('🔴 ', '').replace('🟡 ', '').replace('🟢 ', '')}
-          </div>
+          <span className={styles.articleDate}>{article.date}</span>
         </div>
-        
-        <div className={styles.cardDate}>📅 {article.date}</div>
-        
-        <h3 className={styles.cardTitle}>{article.title}</h3>
-        
-        <p className={styles.cardDescription}>{article.description}</p>
-        
-        <div className={styles.cardFooter}>
-          <span className={styles.cardTopic}>{article.topic}</span>
-          <div className={styles.cardRegion}>
-            {regionEmoji} <span>{article.region}</span>
-          </div>
+        <h3 className={styles.articleTitle}>{article.title}</h3>
+        {article.description && (
+          <p className={styles.articleDesc}>{article.description}</p>
+        )}
+        <div className={styles.articleMeta}>
+          <span className={styles.metaTag}>{article.topic}</span>
+          <span className={styles.metaSport}>{article.sport}</span>
+          <span className={styles.metaRegion}>
+            <MapPin size={10} />
+            {article.region}
+          </span>
         </div>
-      </div>
+        <div className={styles.articleAction}>
+          <span>READ INTEL</span>
+          <ChevronRight size={14} />
+        </div>
+      </article>
     </a>
   );
 }

@@ -14,14 +14,23 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata = {
-  title: 'Intelligence Dashboard - Sport Business & Spatial',
-  description: 'Automated intelligence tracking for sports business and space industry',
+  title: 'INTEL DASHBOARD // Sport Business & Spatial Ops',
+  description: 'Cyber-Ops intelligence tracking for sports business and space industry',
+}
+
+export const viewport = {
+  themeColor: '#050505',
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${archivo.variable} ${jetbrainsMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <div className="grid-mesh" aria-hidden="true" />
+        {children}
+      </body>
     </html>
   )
 }
